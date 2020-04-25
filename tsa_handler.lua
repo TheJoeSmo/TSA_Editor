@@ -1,6 +1,8 @@
 TSA = {}
 TSA.__index = TSA
 
+-- Reads tileset information from the rom
+-- Todo: tile_layout_locations should be moved into the class
 function TSA:read_tsa(idx)
 	local loc = tile_layout_locations[idx]
 	local tileset = {}
@@ -15,6 +17,7 @@ function TSA:read_tsa(idx)
 	return tileset
 end
 
+-- Quick load for all the tilesets we have
 function TSA:load_tilesets()
 	local tilesets = {}
 	for i in pairs(tile_layout_locations) do
@@ -23,6 +26,7 @@ function TSA:load_tilesets()
 	return tilesets
 end
 
+-- Forms a 16x16 block from an idx
 function TSA:load_tsa_img(tiln)
 	return iup.image{
 		width=16,
@@ -34,10 +38,12 @@ function TSA:load_tsa_img(tiln)
 			make_img(chr_tsa_offset(self.tileset[cur_tsa][tiln][4], bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])),
 			8
 		),
-		colors=cur_pals[math.floor(tiln / 4) + 1]
+		colors=ram_pal:get_attribute_palette(math.floor(tiln / 0x40) + 1)
 	}
 end
 
+-- Loads the tsa for the first time
+-- Todo: Should use the TSA:reload() instead of the code here for readability
 function TSA:initilize_gui()
 	local tiles, hboxes = {}, {}
 	local vbox
@@ -55,6 +61,7 @@ function TSA:initilize_gui()
 	return tiles, hboxes, vbox
 end
 
+-- Creates the tsa and sets it up for use
 function TSA:create()
 	local tsa = {}
   	setmetatable(tsa, TSA)
@@ -63,11 +70,13 @@ function TSA:create()
   	return tsa
 end
 
+-- Reloads a tile in the TSA
 function TSA:set_tile(tiln)
 	self.tiles[tiln]["image"] = self:load_tsa_img(tiln)
 	iup.Update(self.tiles[tiln])
 end
 
+-- Reloads the entire TSA
 function TSA:reload()
 	for i=1, 256 do
 		self:set_tile(i)

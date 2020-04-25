@@ -9,15 +9,14 @@ require('iup_gui')
 require('nes_palette')
 require('tsa_handler')
 
--- Todo: Figure out what to do here
-NES = {}
-NES["palette"] = palette
+nes_pal = Pal:create_nes_pal()
+-- Todo: Fix ram palette to look better
+ram_pal = Pal:create_from_ram(nes_pal["palette"], 0x07C1, 0x20)
+print("pal", nes_pal["palette"])
 
 tilez = {} -- The entire chr part of the rom
-cur_pals = nil -- The current palette loaded
 bg_chr_page1 = {} -- BG pages used per tileset
 bg_chr_page2 = {}
-tsa_vbox = nil -- The vbox used for the tsa
 cur_tsa = 2 -- The tileset currently used
 tile_layout_banks = {} -- banks utilized for each tileset
 tile_layout_locations = {} -- the absolute address for every tsa
@@ -26,7 +25,7 @@ tiles_vbox = nil -- The vbox used for the chr tiles displayed
 local function load_chr(start, ennd)
 	charactors = {}
 	for i=start, ennd, 0x10 do
-		local colors = {5, 2, 3, 4} -- Rearranges the colors into the correct format
+		local colors = {4, 1, 2, 3} -- Rearranges the colors into the correct format
 		local tile = {} -- The array of pixels
 		for j=0, 7 do
 			for k=0, 7 do
@@ -99,7 +98,7 @@ local function initilize_current_chr_gui()
 	for i=1, 16 do
 		tiles = {}
 		for j=1, 16 do
-			tiles[j] = load_current_tile((j - 1) + (i - 1) * 0x10, cur_pals[1])
+			tiles[j] = load_current_tile((j - 1) + (i - 1) * 0x10, ram_pal:get_attribute_palette(2))
 		end
 		local hbox = iup.hbox(tiles)
 		hbox["margin"] = "0x0"
@@ -129,7 +128,6 @@ end
 -- Load the roms graphics into easily formable tiles
 local end_of_rom_file = 0x10 + rom.readbyte(0x04) * 0x4000
 tilez = load_chr(end_of_rom_file, end_of_rom_file + rom.readbyte(0x05) * 0x2000)
-update_palette() -- Gets the current palette loaded
 
 set_tileset_element_attributes(1, 23, 1, 0x03D772) -- BG 1
 set_tileset_element_attributes(1, 23, 2, 0x03D772 + 23) -- BG 2
@@ -138,12 +136,7 @@ set_tileset_location(1, 19, 0x03DA07) -- Locations
 
 the_tsa = TSA:create()
 
--- Todo: Add functionality for the TSA to update dynamically
---update_tsa(cur_tsa)
-
 initilize_current_chr_gui()
---set_current_chr_tiles(cur_pals[1]) -- Todo: Fix this
-
 
 dialogs = dialogs + 1
 handles[dialogs] = 
@@ -188,7 +181,7 @@ while true do
 
 	if up then
 		cur_tsa = 7
-		set_current_chr_tiles(cur_pals[1])
+		set_current_chr_tiles(ram_pal:get_attribute_palette(2))
 		the_tsa:reload()
 	end
 

@@ -1,87 +1,64 @@
-palette = {
-	"124 124 124", 
-	"000 000 252", 
-	"000 000 188", 
-	"068 040 188", 
-	"148 000 132", 
-	"168 000 032", 
-	"168 016 000", 
-	"136 020 000", 
-	"080 048 000", 
-	"000 120 000", 
-	"000 104 000", 
-	"000 088 000", 
-	"000 064 088", 
-	"000 000 000", 
-	"000 000 000", 
-	"000 000 000", 
-	"188 188 188", 
-	"000 120 248", 
-	"000 088 248", 
-	"104 068 252", 
-	"216 000 204", 
-	"228 000 088", 
-	"248 056 000", 
-	"228 092 016", 
-	"172 124 000", 
-	"000 184 000", 
-	"000 168 000", 
-	"000 168 068", 
-	"000 136 136", 
-	"000 000 000", 
-	"000 000 000", 
-	"000 000 000", 
-	"248 248 248", 
-	"060 188 252", 
-	"104 136 252", 
-	"152 120 248", 
-	"248 120 248", 
-	"248 088 152", 
-	"248 120 088", 
-	"252 160 068", 
-	"248 184 000", 
-	"184 248 024", 
-	"088 216 084", 
-	"088 248 152", 
-	"000 232 216", 
-	"120 120 120", 
-	"000 000 000", 
-	"000 000 000", 
-	"252 252 252", 
-	"164 228 252", 
-	"184 184 248", 
-	"216 184 248", 
-	"248 184 248", 
-	"248 164 192", 
-	"240 208 176", 
-	"252 224 168", 
-	"248 216 120", 
-	"216 248 120", 
-	"184 248 184", 
-	"184 248 216", 
-	"000 252 252", 
-	"248 216 248", 
-	"000 000 000", 
-	"000 000 000"
-}
+Pal = {}
+Pal.__index = Pal
 
+-- Loads the NES palette or reference palette to make all other palettes
+function Pal:load_palettes()
+	local lines = lines_from("data/palettes.dat")
+	local pals = {}
+	for k,v in pairs(lines) do
+  		pals[k] = v
+	end
+	return pals
+end
+
+-- Makes the actual palette for the NES as a class
+function Pal:create_nes_pal()
+	local pal = {}
+  	setmetatable(pal, Pal)
+  	self.palette = self:load_palettes()
+  	return pal
+end
+
+-- Returns a series of data from RAM
+function Pal:read_palette_from_ram(start, len)
+	local pal = {}
+	for i=start, start + len do
+		table.insert(pal, memory.readbyte(i))
+	end
+	return pal
+end
+
+-- Converts a table of ints into a palette from a reference (typically the nes palette)
+function Pal:convert_from_reference(reference, new)
+	local new_pal = {}
+	for i, v in pairs(new) do
+		table.insert(new_pal, reference[v])
+	end
+	return new_pal
+end
+
+-- Create a palette from ram
+function Pal:create_from_ram(reference, start, len)
+	local pal = self:read_palette_from_ram(start, len)
+  	setmetatable(pal, Pal)
+  	self.palette = self:convert_from_reference(reference, pal)
+  	return pal
+end
+
+-- Gets the smaller subdivisons of the entire palette for attributes of sprites and blocks
+function Pal:get_attribute_palette(attribute)
+	local len = tablelength(self.palette)
+	local offset = (attribute * 4) % len
+	return {self.palette[offset], self.palette[offset + 1], self.palette[offset + 2], self.palette[offset + 3]}
+end
+
+-- Todo: Add the ability to update the ram palette at runtime
+-- Todo: Add the ability to make a palette from the rom
+-- Todo: Move this to the chr tile file
 function chr_tsa_offset(tiln, bg1, bg2)
 	if tiln <= 0x80 then
 		return tiln % 0x80 + bg1 * 0x40
 	else
 		return tiln % 0x80 + bg2 * 0x40
-	end
-end
-
-function update_palette()
-	cur_pals = {}
-	for i=1, 8 do
-		p = {}
-		table.insert(p, "0 0 0")
-		for j=1, 4 do
-			b = memory.readbyte(0x07C0 + j + ((i - 1) * 4))
-			table.insert(p, NES["palette"][b + 1])
-		end
-		table.insert(cur_pals, p)
 	end
 end
