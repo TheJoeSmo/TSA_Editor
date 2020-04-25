@@ -17,7 +17,6 @@ tilez = {} -- The entire chr part of the rom
 cur_pals = nil -- The current palette loaded
 bg_chr_page1 = {} -- BG pages used per tileset
 bg_chr_page2 = {}
-tsa = {}
 tsa_vbox = nil -- The vbox used for the tsa
 cur_tsa = 2 -- The tileset currently used
 tile_layout_banks = {} -- banks utilized for each tileset
@@ -77,35 +76,21 @@ local function set_tileset_location(idx_start, idx_end, memory_start)
 	end
 end
 
-local function make_new_tsa(idx)
-	local loc = tile_layout_locations[idx]
-	local tileset = {}
-	for j=0, 255 do
-		tileset[j + 1] = {
-			rom.readbyte(loc + j),
-			rom.readbyte(loc + j + 0x100),
-			rom.readbyte(loc + j + 0x200),
-			rom.readbyte(loc + j + 0x300)
-		}
-	end
-	return tileset
-end
 
-local function initialize_tsa()
-	for i in pairs(tile_layout_locations) do
-		tsa[i] = make_new_tsa(i)
-	end
+
+local function load_current_img(tiln, palette)
+	return iup.image{
+		width=16,
+		height=16,
+		pixels=upscale_img(make_img(chr_tsa_offset(tiln, bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])), 8, 8, 2),
+		colors=palette
+	}
 end
 
 local function load_current_tile(tiln, palette)
 	return iup.label{
 		title="",
-		image=iup.image{
-			width=16,
-			height=16,
-			pixels=upscale_img(make_img(chr_tsa_offset(tiln, bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])), 8, 8, 2),
-			colors=palette
-		}
+		image=load_current_img(tiln, palette)
 	}
 end
 
@@ -123,17 +108,22 @@ local function initilize_current_chr_gui()
 	tiles_vbox = iup.vbox(hboxes)
 end
 
-local function set_current_chr_tile(idx, tile)
+local function set_current_chr_tile(idx, palette)
+	idx = idx - 1
 	hbox = math.floor(idx / 0x10) + 1
-	loc = idx % 0x10
-	tiles_vbox[hbox][tile] = tile
+	loc = idx % 0x10 + 1
+	tile = tiles_vbox[hbox][loc]
+	tile["image"] = load_current_img(idx, palette)
+	iup.Update(tile)
 end
 
 local function set_current_chr_tiles(palette)
 	for i=1, 256 do
-		set_current_chr_tiles(i, load_current_tile(i, palette))
+		set_current_chr_tile(i, palette)
 	end
 end
+
+
 
 -- Initialization
 -- Load the roms graphics into easily formable tiles
@@ -145,10 +135,8 @@ set_tileset_element_attributes(1, 23, 1, 0x03D772) -- BG 1
 set_tileset_element_attributes(1, 23, 2, 0x03D772 + 23) -- BG 2
 set_tileset_element_attributes(1, 19, 3, 0x03DAB7) -- Banks
 set_tileset_location(1, 19, 0x03DA07) -- Locations
-initialize_tsa() -- Makes the TSA
-print(tsa)
-update_tsa() -- Loads the gui for the TSA
 
+the_tsa = TSA:create()
 
 -- Todo: Add functionality for the TSA to update dynamically
 --update_tsa(cur_tsa)
@@ -156,14 +144,13 @@ update_tsa() -- Loads the gui for the TSA
 initilize_current_chr_gui()
 --set_current_chr_tiles(cur_pals[1]) -- Todo: Fix this
 
+
 dialogs = dialogs + 1
 handles[dialogs] = 
 	iup.dialog{
+		
 		iup.hbox{
-			--iup.label{
-			--	title="s"
-			--},
-			tsa_vbox,
+			the_tsa.vbox,
 			iup.vbox{}, -- Todo: Add GUI to minipulate the tsa
 			tiles_vbox
 		},
@@ -199,11 +186,11 @@ while true do
 	get_inputs()
 	get_mouse_pos()
 
-	--if up then
-	--	cur_tsa = 9
-	--	update_tsa_individually()
-	--	iup.Refresh(handles[dialogs])
-	--end
+	if up then
+		cur_tsa = 7
+		set_current_chr_tiles(cur_pals[1])
+		the_tsa:reload()
+	end
 
 	update_title_screen()
 
