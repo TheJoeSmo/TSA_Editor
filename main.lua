@@ -8,15 +8,14 @@ require('fceux_extensions')
 require('iup_gui')
 require('nes_palette')
 require('tsa_handler')
+require('chr_handler')
 
 nes_pal = Pal:create_nes_pal()
 -- Todo: Fix ram palette to look better
 ram_pal = Pal:create_from_ram(nes_pal["palette"], 0x07C1, 0x20)
-print("pal", nes_pal["palette"])
 
-tilez = {} -- The entire chr part of the rom
-bg_chr_page1 = {} -- BG pages used per tileset
-bg_chr_page2 = {}
+the_chr = CHR:create(get_array_from_rom(0x03D772, 23), get_array_from_rom(0x03D772 + 23, 23))
+
 cur_tsa = 2 -- The tileset currently used
 tile_layout_banks = {} -- banks utilized for each tileset
 tile_layout_locations = {} -- the absolute address for every tsa
@@ -49,10 +48,12 @@ local function load_chr(start, ennd)
 	return charactors
 end
 
+
+
 -- Sets numerious tileset elements from memory
 tileset_elements = {bg_chr_page1, bg_chr_page2, tile_layout_banks, tile_layout_locations}
 local function set_tileset_element_attribute(idx, element, attribute)
-	print(idx, element, attribute)
+	--print(idx, element, attribute)
 	tileset_elements[element][idx] = attribute
 end
 
@@ -81,14 +82,13 @@ local function load_current_img(tiln, palette)
 	return iup.image{
 		width=16,
 		height=16,
-		pixels=upscale_img(make_img(chr_tsa_offset(tiln, bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])), 8, 8, 2),
+		pixels=upscale_img(the_chr:get_iup_img_from_pages(tiln, cur_tsa), 8, 8, 2),
 		colors=palette
 	}
 end
 
 local function load_current_tile(tiln, palette)
 	return iup.label{
-		title="",
 		image=load_current_img(tiln, palette)
 	}
 end
@@ -127,14 +127,10 @@ end
 -- Initialization
 -- Load the roms graphics into easily formable tiles
 local end_of_rom_file = 0x10 + rom.readbyte(0x04) * 0x4000
-tilez = load_chr(end_of_rom_file, end_of_rom_file + rom.readbyte(0x05) * 0x2000)
-
-set_tileset_element_attributes(1, 23, 1, 0x03D772) -- BG 1
-set_tileset_element_attributes(1, 23, 2, 0x03D772 + 23) -- BG 2
 set_tileset_element_attributes(1, 19, 3, 0x03DAB7) -- Banks
 set_tileset_location(1, 19, 0x03DA07) -- Locations
 
-the_tsa = TSA:create()
+the_tsa = TSA:create(the_chr)
 
 initilize_current_chr_gui()
 
@@ -180,12 +176,18 @@ while true do
 	get_mouse_pos()
 
 	if up then
-		cur_tsa = 7
+		cur_tsa = cur_tsa + 1
+		if cur_tsa == 24 then cur_tsa = 23 end
 		set_current_chr_tiles(ram_pal:get_attribute_palette(2))
 		the_tsa:reload()
 	end
 
-	update_title_screen()
+	if down then
+		cur_tsa = cur_tsa - 1
+		if cur_tsa == 0 then cur_tsa = 1 end
+		set_current_chr_tiles(ram_pal:get_attribute_palette(2))
+		the_tsa:reload()
+	end
 
 	emu.frameadvance()
 end

@@ -28,6 +28,14 @@ function lines_from(file)
   	return lines
 end
 
+function get_array_from_rom(loc, len)
+	ele = {}
+	for i=1, len do
+		ele[i] = rom.readbyte(loc + i - 1)
+	end
+	return ele
+end
+
 function dec_to_hex(numberin)
 	return string.format("%X",numberin)
 end

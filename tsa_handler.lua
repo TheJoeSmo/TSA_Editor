@@ -32,10 +32,10 @@ function TSA:load_tsa_img(tiln)
 		width=16,
 		height=16,
 		pixels=merge_tiles(
-			make_img(chr_tsa_offset(self.tileset[cur_tsa][tiln][1], bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])),
-			make_img(chr_tsa_offset(self.tileset[cur_tsa][tiln][2], bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])),
-			make_img(chr_tsa_offset(self.tileset[cur_tsa][tiln][3], bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])),
-			make_img(chr_tsa_offset(self.tileset[cur_tsa][tiln][4], bg_chr_page1[cur_tsa], bg_chr_page2[cur_tsa])),
+			self.chr_handler:get_iup_img_from_pages(self.tileset[cur_tsa][tiln][1], cur_tsa),
+			self.chr_handler:get_iup_img_from_pages(self.tileset[cur_tsa][tiln][2], cur_tsa),
+			self.chr_handler:get_iup_img_from_pages(self.tileset[cur_tsa][tiln][3], cur_tsa),
+			self.chr_handler:get_iup_img_from_pages(self.tileset[cur_tsa][tiln][4], cur_tsa),
 			8
 		),
 		colors=ram_pal:get_attribute_palette(math.floor(tiln / 0x40) + 1)
@@ -62,9 +62,10 @@ function TSA:initilize_gui()
 end
 
 -- Creates the tsa and sets it up for use
-function TSA:create()
+function TSA:create(chr_handler)
 	local tsa = {}
   	setmetatable(tsa, TSA)
+  	self.chr_handler = chr_handler
   	self.tileset = self:load_tilesets()
   	self.tiles, self.hboxes, self.vbox = self:initilize_gui()
   	return tsa
