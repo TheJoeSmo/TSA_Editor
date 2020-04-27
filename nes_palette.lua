@@ -23,7 +23,7 @@ end
 function Pal:read_palette_from_ram(start, len)
 	local pal = {}
 	for i=start, start + len do
-		table.insert(pal, memory.readbyte(i))
+		table.insert(pal, memory.readbyte(i) + 1)
 	end
 	return pal
 end
@@ -47,8 +47,10 @@ end
 
 -- Gets the smaller subdivisons of the entire palette for attributes of sprites and blocks
 function Pal:get_attribute_palette(attribute)
+	attribute = attribute - 1
 	local len = tablelength(self.palette)
-	local offset = (attribute * 4) % len
+	local offset = (attribute * 4) % len + 1
+	print(offset)
 	return {self.palette[offset], self.palette[offset + 1], self.palette[offset + 2], self.palette[offset + 3]}
 end
 
