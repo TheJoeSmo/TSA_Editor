@@ -28,7 +28,6 @@ end
 function CHR:get_iup_img_from_pages(tiln, partisian)
 	local pages = {self.bg1[partisian], self.bg2[partisian]}
 	local idx = math.floor((0x80 + tiln) / 0x80)
-	--print(tiln, pages, idx, pages[idx], partisian, self.bg1[partisian], self.bg2[partisian])
 	return self:get_iup_img((tiln % 0x80) + 1 + (pages[idx] * 0x40))
 end
 

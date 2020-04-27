@@ -10,6 +10,8 @@ require('nes_palette')
 require('tsa_handler')
 require('chr_handler')
 require('tile_handler')
+require('tile_controller')
+
 
 nes_pal = Pal:create_nes_pal()
 -- Todo: Fix ram palette to look better
@@ -58,6 +60,9 @@ set_tileset_location(1, 19, 0x03DA07) -- Locations
 -- create the dialogs for the tsa and chr
 the_tsa = TSA:create(the_chr)
 the_til = TIL:create(the_chr)
+the_tcnt = TCNT:create(the_tsa, the_til)
+the_til:set_tcnt(the_tcnt)
+the_tsa:set_tcnt(the_tcnt)
 
 dialogs = dialogs + 1
 handles[dialogs] = 
@@ -65,7 +70,7 @@ handles[dialogs] =
 		
 		iup.hbox{
 			the_tsa.vbox,
-			iup.vbox{}, -- Todo: Add GUI to minipulate the tsa
+			iup.vbox{the_tcnt.gui},
 			the_til.vbox
 		},
 		menu=iup.menu{

@@ -1,6 +1,8 @@
 TSA = {}
 TSA.__index = TSA
 
+TSA.ids = {}
+
 -- Reads tileset information from the rom
 -- Todo: tile_layout_locations should be moved into the class
 function TSA:read_tsa(idx)
@@ -42,6 +44,11 @@ function TSA:load_tsa_img(tiln)
 	}
 end
 
+-- Returns the current tile that should be displayed in the tsa
+function TSA:get_tile(tiln, n)
+	return self.tileset[cur_tsa][tiln][n]
+end
+
 -- Loads the tsa for the first time
 -- Todo: Should use the TSA:reload() instead of the code here for readability
 function TSA:initilize_gui()
@@ -50,7 +57,14 @@ function TSA:initilize_gui()
 	for i=0, 15 do
 		local hbox = {}
 		for j=1, 16 do
-			local tile = iup.label{image=self:load_tsa_img(j + i * 16)}
+			local til = self:load_tsa_img(j + i * 16)
+			local tile = iup.button{
+			image=til,
+			impress=til,
+			impressboarder="no",
+			rastersize="16x16"
+			}
+			tile.action = "TSA.ids[".. self.id .."]:btn_act(".. j + i * 16 ..")"
 			table.insert(tiles, tile)
 			hbox[j] = tile
 		end
@@ -65,14 +79,18 @@ end
 function TSA:create(chr_handler)
 	local tsa = {}
 	setmetatable(tsa, TSA)
+	table.insert(TSA.ids, tsa)
+  	self.id = tablelength(TSA.ids)
+
   	self.chr_handler = chr_handler
   	self.tileset = self:load_tilesets()
   	self.tiles, self.hboxes, self.vbox = self:initilize_gui()
+  	self.tcnt = nil
   	return tsa
 end
 
 -- Reloads a tile in the TSA
-function TSA:set_tile(tiln)
+function TSA:reload_tile(tiln)
 	self.tiles[tiln]["image"] = self:load_tsa_img(tiln)
 	iup.Update(self.tiles[tiln])
 end
@@ -80,6 +98,19 @@ end
 -- Reloads the entire TSA
 function TSA:reload()
 	for i=1, 256 do
-		self:set_tile(i)
+		self:reload_tile(i)
 	end
+end
+
+function TSA:set_tile(tiln, n, new)
+	self.tileset[cur_tsa][tiln][n] = new
+	self:reload_tile(tiln)
+end
+
+function TSA:set_tcnt(tcnt)
+	self.tcnt = tcnt
+end
+
+function TSA:btn_act(idx)
+	self.tcnt:set_tsa_idx(idx)
 end

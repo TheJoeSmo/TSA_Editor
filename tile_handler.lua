@@ -1,6 +1,8 @@
 TIL = {}
 TIL.__index = TIL
 
+TIL.ids = {}
+
 -- Makes a simple 8x8 image that is upscaled x2 for better viewing
 function TIL:make_iup_img(tiln, pal)
 	return iup.image{
@@ -19,9 +21,13 @@ function TIL:initilize_tiles()
 		local tilez = {}
 		for j=1, 16 do
 			tile = self:make_iup_img((j - 1) + (i - 1) * 0x10, 1)
-			tile = iup.label{
-				image=tile
+			tile = iup.button{
+				image=tile,
+				impress=tile,
+				impressboarder="no",
+				rastersize="16x16"
 			}
+			tile.action = "TIL.ids[".. self.id .."]:btn_act(".. (j - 1) + (i - 1) * 0x10 ..")"
 			tilez[j] = tile
 			table.insert(tiles, tile)
 		end
@@ -50,7 +56,19 @@ end
 function TIL:create(chr_handler)
 	local til = {}
   	setmetatable(til, TIL)
+  	table.insert(TIL.ids, til)
+  	self.id = tablelength(TIL.ids)
   	self.chr_handler = chr_handler
   	self.tiles, self.hboxes, self.vbox = self:initilize_tiles()
+  	self.tcnt = nil
   	return til
+end
+
+function TIL:set_tcnt(tcnt)
+	self.tcnt = tcnt
+end
+
+function TIL:btn_act(tiln)
+	self.tcnt:set_tile(tiln)
+	print(tiln)
 end
