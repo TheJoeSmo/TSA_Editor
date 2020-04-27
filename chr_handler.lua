@@ -1,6 +1,7 @@
 CHR = {}
 CHR.__index = CHR
 
+-- Gets the correct offset to read a tile in rom
 function CHR:get_tile_offset(tiln)
 	local loc = (0x10 * tiln) % self.chr_size
 	return loc + self.chr_start
@@ -23,6 +24,7 @@ function CHR:get_iup_img(tiln)
 	return tile
 end
 
+-- Returns the correct tile from a given pair of bgs and tile number
 function CHR:get_iup_img_from_pages(tiln, partisian)
 	local pages = {self.bg1[partisian], self.bg2[partisian]}
 	local idx = math.floor((0x80 + tiln) / 0x80)
@@ -30,16 +32,17 @@ function CHR:get_iup_img_from_pages(tiln, partisian)
 	return self:get_iup_img((tiln % 0x80) + 1 + (pages[idx] * 0x40))
 end
 
+-- Adds new bg in pairs to ensure nothing funny happens
 function CHR:set_new_bg(bg1, bg2)
 	local bg1 = bg1 or 0
 	local bg2 = bg2 or 0
 	bg1 = bg1 % (self.size * 8)
 	bg2 = bg2 % (self.size * 8)
-	print(bg1, bg2)
 	table.insert(self.bg1, bg1)
 	table.insert(self.bg2, bg2)
 end
 
+-- Creates the chr handler
 function CHR:create(bg1s, bg2s)
 	local chr = {}
   	setmetatable(chr, CHR)
@@ -53,7 +56,6 @@ function CHR:create(bg1s, bg2s)
   	for i, v in pairs(bg1s) do
   		self:set_new_bg(bg1s[i], bg2s[i])
   	end
-  	print(bg1s, bg2s, self.bg1, self.bg2)
   	return chr
 end
 

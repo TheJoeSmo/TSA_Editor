@@ -64,7 +64,7 @@ end
 -- Creates the tsa and sets it up for use
 function TSA:create(chr_handler)
 	local tsa = {}
-  	setmetatable(tsa, TSA)
+	setmetatable(tsa, TSA)
   	self.chr_handler = chr_handler
   	self.tileset = self:load_tilesets()
   	self.tiles, self.hboxes, self.vbox = self:initilize_gui()
