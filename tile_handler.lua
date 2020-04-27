@@ -70,5 +70,4 @@ end
 
 function TIL:btn_act(tiln)
 	self.tcnt:set_tile(tiln)
-	print(tiln)
 end

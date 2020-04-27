@@ -67,11 +67,21 @@ the_tsa:set_tcnt(the_tcnt)
 dialogs = dialogs + 1
 handles[dialogs] = 
 	iup.dialog{
-		
-		iup.hbox{
-			the_tsa.vbox,
-			iup.vbox{the_tcnt.gui},
-			the_til.vbox
+		iup.frame{
+			iup.hbox{
+				iup.frame{
+					the_tsa.vbox, sunken="yes", margin="2x2", title="Tile Square Assembly"
+				},
+				iup.vbox{
+					iup.frame{
+						the_tcnt.gui, sunken="yes", margin="2x2", title="Tile"
+					}
+					
+				},
+				iup.frame{
+					the_til.vbox, sunken="yes", margin="2x2", title="Background Tiles"
+				}
+			}
 		},
 		menu=iup.menu{
 			iup.submenu{
@@ -91,7 +101,7 @@ handles[dialogs] =
 			}
 		},
 		title="TSA Editor",
-		size="512x256",
+		size="420x190",
 		margin="10x10"
 	}
 handles[dialogs]:showxy(iup.CENTER, iup.CENTER)

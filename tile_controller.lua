@@ -6,7 +6,6 @@ TCNT.ids = {}
 function TCNT:initialize_gui()
 	buttons = {}
 	for i=1, 4 do
-		print(self.tsa:get_tile(self.tsa_sel, i))
 		tile = self.til:make_iup_img(self.tsa:get_tile(self.tsa_sel, i), self.pal)
 		buttons[i] = iup.button{
 			image=tile,
@@ -31,7 +30,6 @@ end
 TCNT.tsa_offset = {1, 3, 2, 4}
 
 function TCNT:set_tile(tiln)
-	print("set_tile")
 	self.buttons[self.cur_sel]["image"] = self.til:make_iup_img(tiln, self.pal)
 	iup.Update(self.buttons[self.cur_sel])
 	self.tsa:set_tile(self.tsa_sel, TCNT.tsa_offset[self.cur_sel], tiln)
@@ -46,7 +44,6 @@ function TCNT:set_tsa_idx(idx)
 end
 
 function TCNT:btn_act(idx)
-	print(idx, self.cur_sel)
 	self.cur_sel = idx
 end
 
