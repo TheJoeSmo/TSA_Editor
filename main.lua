@@ -50,6 +50,7 @@ local function set_tileset_location(idx_start, idx_end, memory_start)
 	end
 end
 
+-- Writes a string to a file
 function write_file(filename, str)
   	local ifile = io.open(filename, "w")
   	if (not ifile) then
@@ -62,6 +63,7 @@ function write_file(filename, str)
   	ifile:close()
 end
 
+-- Textify all data that we want into a file
 function textify_data()
 	local data = [[;----------------------------------
 ; Super Mario Bros. 3 Tile Square Assembly Tool Output
@@ -92,6 +94,7 @@ function textify_data()
 	return data
 end
 
+-- Saves to a file
 function save_file()
   	local filedlg = iup.filedlg{
     	dialogtype = "SAVE", 
@@ -106,6 +109,28 @@ function save_file()
     	write_file(filename, textify_data())
   	end
   	filedlg:destroy()
+end
+
+-- Saves the tileset directly to the rom
+function save_tileset_to_rom()
+	local tileset = the_tsa.tileset
+	for i, tiles in pairs(tileset) do
+		local loc = tile_layout_locations[i]
+
+		for j=1, 4 do
+			for k=1, 256 do
+				rom.writebyte(loc, tiles[k][j])
+				loc = loc + 1
+			end
+		end
+
+		local loc = tile_layout_locations[i] + 0x400
+	end
+end
+
+-- Saves to the rom directly
+function save_to_rom()
+	save_tileset_to_rom()
 end
 
 -- Initialization
@@ -148,6 +173,12 @@ handles[dialogs] =
     				iup.item{title="Exit"}	
 				},
 				title="File"
+			},
+			iup.submenu{
+				iup.menu{
+					iup.item{title="Save", action="save_to_rom()"}
+				},
+				title="ROM"
 			},
 			iup.submenu{
 				iup.menu{
