@@ -50,7 +50,6 @@ function Pal:get_attribute_palette(attribute)
 	attribute = attribute - 1
 	local len = tablelength(self.palette)
 	local offset = (attribute * 4) % len + 1
-	print(offset)
 	return {self.palette[offset], self.palette[offset + 1], self.palette[offset + 2], self.palette[offset + 3]}
 end
 

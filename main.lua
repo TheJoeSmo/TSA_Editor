@@ -28,7 +28,6 @@ tile_layout_locations = {} -- the absolute address for every tsa
 -- Sets numerious tileset elements from memory
 tileset_elements = {bg_chr_page1, bg_chr_page2, tile_layout_banks, tile_layout_locations}
 local function set_tileset_element_attribute(idx, element, attribute)
-	--print(idx, element, attribute)
 	tileset_elements[element][idx] = attribute
 end
 
@@ -49,6 +48,64 @@ local function set_tileset_location(idx_start, idx_end, memory_start)
 		)
 		cur = cur + 2
 	end
+end
+
+function write_file(filename, str)
+  	local ifile = io.open(filename, "w")
+  	if (not ifile) then
+    	iup.Message("Error", "Can't open file: " .. filename)
+    	return
+  	end
+  	if (not ifile:write(str)) then
+    	iup.Message("Error", "Fail when writing to file: " .. filename)
+  	end
+  	ifile:close()
+end
+
+function textify_data()
+	local data = [[;----------------------------------
+; Super Mario Bros. 3 Tile Square Assembly Tool Output
+; By Joe Smo
+;
+; Below is the output for each tileset.
+; For more information read consult the readme
+;----------------------------------
+	]]
+	local tileset = the_tsa.tileset
+	for i, tiles in pairs(tileset) do
+		data = data.. "\n; Tileset: ".. i.. "  "
+		for j=1, 4 do
+			count = 0
+			for k, tile in pairs(tiles) do
+				if count % 0x10 == 0 then
+					if count == 0 then
+						data = data:sub(1, -3).. "\n\n\t.byte "
+					else
+						data = data:sub(1, -3).. "\n\t.byte "
+					end
+				end
+				data = data.. "$" ..dec_to_hex_byte(tile[j]).. ", "
+				count = count + 1
+			end
+		end
+	end
+	return data
+end
+
+function save_file()
+  	local filedlg = iup.filedlg{
+    	dialogtype = "SAVE", 
+    	filter = "*.txt", 
+    	filterinfo = "Text Files",
+    }
+
+  	filedlg:popup(iup.CENTER, iup.CENTER)
+
+  	if (tonumber(filedlg.status) ~= -1) then
+    	local filename = filedlg.value
+    	write_file(filename, textify_data())
+  	end
+  	filedlg:destroy()
 end
 
 -- Initialization
@@ -87,7 +144,7 @@ handles[dialogs] =
 			iup.submenu{
 				iup.menu{
 					iup.item{title="Open"},
-    				iup.item{title="Save As"},
+    				iup.item{title="Save As", action="save_file()"},
     				iup.item{title="Exit"}	
 				},
 				title="File"

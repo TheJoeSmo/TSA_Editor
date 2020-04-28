@@ -36,6 +36,10 @@ function get_array_from_rom(loc, len)
 	return ele
 end
 
+function dec_to_hex_byte(numberin)
+	return string.format("%02X",numberin)
+end
+
 function dec_to_hex(numberin)
 	return string.format("%X",numberin)
 end
