@@ -11,18 +11,13 @@ require('tsa_handler')
 require('chr_handler')
 require('tile_handler')
 require('tile_controller')
+require('saving')
 
-
-nes_pal = Pal:create_nes_pal()
 -- Todo: Fix ram palette to look better
-ram_pal = Pal:create_from_ram(nes_pal["palette"], 0x07C1, 0x20)
+ram_pal = Pal:create_from_ram(0x07C1, 0x20)
 
-the_chr = CHR:create(get_array_from_rom(0x03D772, 23), get_array_from_rom(0x03D772 + 23, 23))
-
-cur_tsa = 2 -- The tileset currently used
-tile_layout_banks = {} -- banks utilized for each tileset
-tile_layout_locations = {} -- the absolute address for every tsa
-
+cur_tsa = 1 -- The tileset currently used
+cur_pal = 1 -- Current palette displayed
 -- Todo: Move these routines somewhere else
 
 -- Sets numerious tileset elements from memory
@@ -50,101 +45,101 @@ local function set_tileset_location(idx_start, idx_end, memory_start)
 	end
 end
 
--- Writes a string to a file
-function write_file(filename, str)
-  	local ifile = io.open(filename, "w")
-  	if (not ifile) then
-    	iup.Message("Error", "Can't open file: " .. filename)
-    	return
-  	end
-  	if (not ifile:write(str)) then
-    	iup.Message("Error", "Fail when writing to file: " .. filename)
-  	end
-  	ifile:close()
-end
-
--- Textify all data that we want into a file
-function textify_data()
-	local data = [[;----------------------------------
-; Super Mario Bros. 3 Tile Square Assembly Tool Output
-; By Joe Smo
-;
-; Below is the output for each tileset.
-; For more information read consult the readme
-;----------------------------------
-	]]
-	local tileset = the_tsa.tileset
-	for i, tiles in pairs(tileset) do
-		data = data.. "\n; Tileset: ".. i.. "  "
-		for j=1, 4 do
-			count = 0
-			for k, tile in pairs(tiles) do
-				if count % 0x10 == 0 then
-					if count == 0 then
-						data = data:sub(1, -3).. "\n\n\t.byte "
-					else
-						data = data:sub(1, -3).. "\n\t.byte "
-					end
-				end
-				data = data.. "$" ..dec_to_hex_byte(tile[j]).. ", "
-				count = count + 1
-			end
-		end
+function get_all_ts_info(info)
+	a = {}
+	for i, v in pairs(tilesetz) do
+		a[i] = v[info]
 	end
-	return data
+	return a
 end
 
--- Saves to a file
-function save_file()
-  	local filedlg = iup.filedlg{
-    	dialogtype = "SAVE", 
-    	filter = "*.txt", 
-    	filterinfo = "Text Files",
-    }
-
-  	filedlg:popup(iup.CENTER, iup.CENTER)
-
-  	if (tonumber(filedlg.status) ~= -1) then
-    	local filename = filedlg.value
-    	write_file(filename, textify_data())
-  	end
-  	filedlg:destroy()
+function get_ts_info(info, tileset)
+	return tilesetz[tileset][info]
 end
 
--- Saves the tileset directly to the rom
-function save_tileset_to_rom()
-	local tileset = the_tsa.tileset
-	for i, tiles in pairs(tileset) do
-		local loc = tile_layout_locations[i]
-
-		for j=1, 4 do
-			for k=1, 256 do
-				rom.writebyte(loc, tiles[k][j])
-				loc = loc + 1
-			end
-		end
-
-		local loc = tile_layout_locations[i] + 0x400
+function get_palette_information(idx)
+	local lines = lines_from("data/default_palettes.dat")
+	local count = 0
+	local pal = {}
+	for substring in lines[idx]:gmatch("%S+") do
+		table.insert(pal, tonumber(substring, 16))
 	end
+	pal = Pal:create_from_table(pal)
+	return pal
 end
 
--- Saves to the rom directly
-function save_to_rom()
-	save_tileset_to_rom()
+local function get_tileset_palette(chunk)
+	palettes = {}
+	for i=1, 8 do
+		palettes[i] = get_palette_information((chunk - 1) * 8 + i)
+	end
+	return palettes
+end
+
+local function set_tileset_information_from_file()
+	local lines = lines_from("data/tileset_info.dat")
+	local tilesets = {}
+	for k, v in pairs(lines) do
+		chunks = {}
+		for substring in v:gmatch("%S+") do
+			table.insert(chunks, substring)
+		end
+  		tilesets[k] = {
+  		bank=tonumber(chunks[1]), 
+  		absolute_address=get_absolute_address(chunks[1], 0),
+  		bg1=tonumber(chunks[2], 16), bg2=tonumber(chunks[3], 16),
+  		bg_tile=tonumber(chunks[4], 16),
+  		page1=tonumber(chunks[5]), page2=tonumber(chunks[6]),
+  		palettes=get_tileset_palette(tonumber(chunks[7], 16)),
+  		name=chunks[8]
+  		}
+	end
+	return tilesets
+end
+
+function update_tileset_gui(idx)
+	cur_tsa = idx
+	the_til:reload()
+	the_tsa:reload()
+end
+
+local function set_up_ts_dlg()
+	items = {}
+	for k, v in pairs(tilesetz) do
+		items[k] = iup.item{title=v["name"], action="update_tileset_gui(".. k ..")"}
+	end
+	menu = iup.menu(items)
+	return menu
+end
+
+function update_palette_gui(idx)
+	cur_pal = idx
+	the_til:reload()
+	the_tsa:reload()
+end
+
+local function set_up_pal_dlg()
+	items = {}
+	for i=1, 8 do
+		items[i] = iup.item{title="Palette ".. i, action="update_palette_gui(".. i ..")"}
+	end
+	return iup.menu(items)
 end
 
 -- Initialization
 -- Load the roms graphics into easily formable tiles
 end_of_rom_file = 0x10 + rom.readbyte(0x04) * 0x4000
-set_tileset_element_attributes(1, 19, 3, 0x03DAB7) -- Banks
-set_tileset_location(1, 19, 0x03DA07) -- Locations
 
 -- create the dialogs for the tsa and chr
+tilesetz = set_tileset_information_from_file()
+the_chr = CHR:create(get_all_ts_info("bg1"), get_all_ts_info("bg2"))
 the_tsa = TSA:create(the_chr)
 the_til = TIL:create(the_chr)
 the_tcnt = TCNT:create(the_tsa, the_til)
 the_til:set_tcnt(the_tcnt)
 the_tsa:set_tcnt(the_tcnt)
+ts_dlg = set_up_ts_dlg()
+pal_dlg = set_up_pal_dlg()
 
 dialogs = dialogs + 1
 handles[dialogs] = 
@@ -181,11 +176,17 @@ handles[dialogs] =
 				title="ROM"
 			},
 			iup.submenu{
+				set_up_ts_dlg(),
+				title="Tilesets"
+			},
+			iup.submenu{
 				iup.menu{
-					iup.item{title="tileset 1"},
-					iup.item{title="tileset 2"}
+					iup.submenu{
+						pal_dlg, title="Default"
+					},
+					title="default"
 				},
-				title="Tileset"
+				title="Palettes"
 			}
 		},
 		title="TSA Editor",
@@ -212,7 +213,7 @@ while true do
 
 	if down then
 		cur_tsa = cur_tsa - 1
-		if cur_tsa == 0 then cur_tsa = 1 end
+		if cur_tsa == -1 then cur_tsa = 0 end
 		the_tsa:reload()
 		the_til:reload()
 	end

@@ -9,7 +9,7 @@ function TIL:make_iup_img(tiln, pal)
 		width=16,
 		height=16,
 		pixels=upscale_img(self.chr_handler:get_iup_img_from_pages(tiln, cur_tsa), 8, 8, 2),
-		colors=ram_pal:get_attribute_palette(pal)
+		colors=get_attribute_palette(self:get_current_pal(), pal)
 	}
 end
 
@@ -39,6 +39,14 @@ function TIL:initilize_tiles()
 	return tiles, hboxes, vbox
 end
 
+function TIL:get_current_pal()
+	return self.palette[cur_pal]
+end
+
+function TIL:update_pal()
+	return get_ts_info("palettes", cur_tsa)
+end
+
 -- Relaod a tile and update it
 function TIL:set_tile(tiln)
 	self.tiles[tiln]["image"] = self:make_iup_img(tiln - 1, 1)
@@ -47,6 +55,7 @@ end
 
 -- Reloads every tile and updates it
 function TIL:reload()
+	self:update_pal()
 	for i=1, 256 do
 		self:set_tile(i)
 	end
@@ -59,6 +68,7 @@ function TIL:create(chr_handler)
   	table.insert(TIL.ids, til)
   	self.id = tablelength(TIL.ids)
   	self.chr_handler = chr_handler
+  	self.palette = self:update_pal()
   	self.tiles, self.hboxes, self.vbox = self:initilize_tiles()
   	self.tcnt = nil
   	return til

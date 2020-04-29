@@ -6,7 +6,7 @@ TSA.ids = {}
 -- Reads tileset information from the rom
 -- Todo: tile_layout_locations should be moved into the class
 function TSA:read_tsa(idx)
-	local loc = tile_layout_locations[idx]
+	local loc = get_ts_info("absolute_address", idx)
 	local tileset = {}
 	for j=0, 255 do
 		tileset[j + 1] = {
@@ -22,10 +22,14 @@ end
 -- Quick load for all the tilesets we have
 function TSA:load_tilesets()
 	local tilesets = {}
-	for i in pairs(tile_layout_locations) do
+	for i in pairs(tilesetz) do
 		tilesets[i] = self:read_tsa(i)
 	end
 	return tilesets
+end
+
+function TSA:get_current_pal()
+	return self.palette[cur_pal]
 end
 
 -- Forms a 16x16 block from an idx
@@ -40,7 +44,7 @@ function TSA:load_tsa_img(tiln)
 			self.chr_handler:get_iup_img_from_pages(self.tileset[cur_tsa][tiln][4], cur_tsa),
 			8
 		),
-		colors=ram_pal:get_attribute_palette(math.floor(tiln / 0x40) + 1)
+		colors=get_attribute_palette(self:get_current_pal(), math.floor((tiln - 1) / 0x40) + 1)
 	}
 end
 
@@ -75,6 +79,10 @@ function TSA:initilize_gui()
 	return tiles, hboxes, vbox
 end
 
+function TSA:update_pal()
+	return get_ts_info("palettes", cur_tsa)
+end
+
 -- Creates the tsa and sets it up for use
 function TSA:create(chr_handler)
 	local tsa = {}
@@ -84,6 +92,7 @@ function TSA:create(chr_handler)
 
   	self.chr_handler = chr_handler
   	self.tileset = self:load_tilesets()
+  	self.palette = self:update_pal()
   	self.tiles, self.hboxes, self.vbox = self:initilize_gui()
   	self.tcnt = nil
   	return tsa
@@ -97,6 +106,7 @@ end
 
 -- Reloads the entire TSA
 function TSA:reload()
+	self.palette = self:update_pal()
 	for i=1, 256 do
 		self:reload_tile(i)
 	end
