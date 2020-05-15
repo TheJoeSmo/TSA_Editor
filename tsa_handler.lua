@@ -95,6 +95,8 @@ function TSA:create(chr_handler)
   	self.palette = self:update_pal()
   	self.tiles, self.hboxes, self.vbox = self:initilize_gui()
   	self.tcnt = nil
+  	self.tactt_gui = nil
+  	self.attr = nil
   	return tsa
 end
 
@@ -106,6 +108,8 @@ end
 
 -- Reloads the entire TSA
 function TSA:reload()
+	self.attr:set_idx(cur_tsa * 4 + math.floor(current_tile / 0x40))
+	self.attr:update_gui()
 	self.palette = self:update_pal()
 	for i=1, 256 do
 		self:reload_tile(i)
@@ -121,6 +125,19 @@ function TSA:set_tcnt(tcnt)
 	self.tcnt = tcnt
 end
 
+function TSA:set_current_tile_gui(tactt_gui)
+	self.tactt_gui = tactt_gui
+end
+
+function TSA:set_tile_attr(attr)
+	self.attr = attr
+end
+
 function TSA:btn_act(idx)
 	self.tcnt:set_tsa_idx(idx)
+	current_tile = idx
+	self.tactt_gui.title = "tile: ".. dec_to_hex_byte(current_tile - 1)
+	print(cur_tsa)
+	self.attr:set_idx(math.max(cur_tsa - 1, 0) * 4 + math.floor(current_tile / 0x40))
+	self.attr:update_gui()
 end

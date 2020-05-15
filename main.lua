@@ -12,6 +12,7 @@ require('chr_handler')
 require('tile_handler')
 require('tile_controller')
 require('saving')
+require('tile_attribute_handler')
 
 -- Todo: Fix ram palette to look better
 ram_pal = Pal:create_from_ram(0x07C1, 0x20)
@@ -43,6 +44,36 @@ local function set_tileset_location(idx_start, idx_end, memory_start)
 		)
 		cur = cur + 2
 	end
+end
+
+local function get_water_tiles()
+	return get_array_from_rom(0x210, 56)
+end 
+
+local function get_semisolid_tiles()
+	a = {}
+	count = 1
+	for i, tileset in pairs(tilesetz) do
+		b = get_array_from_rom(tileset.absolute_address + 0x400, 4)
+		for j, c in pairs(b) do
+			a[count] = c
+			count = count + 1
+		end		
+	end
+	return a
+end
+
+local function get_solid_tiles()
+	a = {}
+	count = 1
+	for i, tileset in pairs(tilesetz) do
+		b = get_array_from_rom(tileset.absolute_address + 0x404, 4)
+		for j, c in pairs(b) do
+			a[count] = c
+			count = count + 1
+		end	
+	end
+	return a
 end
 
 function get_all_ts_info(info)
@@ -140,24 +171,69 @@ the_til:set_tcnt(the_tcnt)
 the_tsa:set_tcnt(the_tcnt)
 ts_dlg = set_up_ts_dlg()
 pal_dlg = set_up_pal_dlg()
+current_tile = 0
+current_tile_lable = iup.label{title="tile: ".. dec_to_hex_byte(current_tile)}
+the_tsa:set_current_tile_gui(current_tile_lable)
+tile_attr = TATTR:create(get_water_tiles(), get_semisolid_tiles(), get_solid_tiles())
+the_tsa:set_tile_attr(tile_attr)
+
 
 dialogs = dialogs + 1
 handles[dialogs] = 
 	iup.dialog{
 		iup.frame{
-			iup.hbox{
-				iup.frame{
-					the_tsa.vbox, sunken="yes", margin="2x2", title="Tile Square Assembly"
-				},
-				iup.vbox{
+			iup.vbox{
+				iup.hbox{
 					iup.frame{
-						the_tcnt.gui, sunken="yes", margin="2x2", title="Tile"
+						the_tsa.vbox, sunken="yes", margin="2x2", title="Tile Square Assembly"
+					},
+					iup.vbox{
+						iup.frame{
+							the_tcnt.gui, sunken="yes", margin="2x2", title="Tile"
+						},
+						iup.frame{
+							current_tile_lable, sunken="yes", margin="2x2"
+						}
+						
+					},
+					iup.frame{
+						the_til.vbox, sunken="yes", margin="2x2", title="Background Tiles"
 					}
-					
 				},
 				iup.frame{
-					the_til.vbox, sunken="yes", margin="2x2", title="Background Tiles"
-				}
+					iup.hbox{
+						iup.vbox{
+							iup.label{title="Air"},
+							iup.hbox{
+								tile_attr.air_gui,
+								iup.button{title=">", action="tile_attr:update_values(1, 0, 0, 0)"}
+							}, margin="2x2"
+						},
+						iup.vbox{
+							iup.label{title="Water"},
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, -1, 0, 0)"},
+								tile_attr.water_gui,
+								iup.button{title=">", action="tile_attr:update_values(0, 0, 1, 0)"}
+							}, margin="2x2"
+						},
+						iup.vbox{
+							iup.label{title="Semisolid"},
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, 0, -1, 0)"},
+								tile_attr.semisolid_gui,
+								iup.button{title=">", action="tile_attr:update_values(0, 0, 0, 1)"}
+							}, margin="2x2"							
+						},
+						iup.vbox{
+							iup.label{title="Solid"},
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, 0, 0, -1)"},
+								tile_attr.solid_gui
+							}, margin="2x2"
+						}
+					}
+				}, sunken="yes", margin="10x2", title="Tile Attributes"
 			}
 		},
 		menu=iup.menu{
@@ -190,7 +266,7 @@ handles[dialogs] =
 			}
 		},
 		title="TSA Editor",
-		size="420x190",
+		size="420x220",
 		margin="10x10"
 	}
 handles[dialogs]:showxy(iup.CENTER, iup.CENTER)
