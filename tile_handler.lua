@@ -5,6 +5,9 @@ TIL.ids = {}
 
 -- Makes a simple 8x8 image that is upscaled x2 for better viewing
 function TIL:make_iup_img(tiln, pal)
+	if not pal then
+		pal = self.mini_pal
+	end
 	return iup.image{
 		width=16,
 		height=16,
@@ -20,7 +23,7 @@ function TIL:initilize_tiles()
 	for i=1, 16 do
 		local tilez = {}
 		for j=1, 16 do
-			tile = self:make_iup_img((j - 1) + (i - 1) * 0x10, 1)
+			tile = self:make_iup_img((j - 1) + (i - 1) * 0x10, nil)
 			tile = iup.button{
 				image=tile,
 				impress=tile,
@@ -40,7 +43,7 @@ function TIL:initilize_tiles()
 end
 
 function TIL:get_current_pal()
-	return self.palette[cur_pal]
+	return get_ts_info("palettes", cur_tsa)[cur_pal]
 end
 
 function TIL:update_pal()
@@ -49,7 +52,7 @@ end
 
 -- Relaod a tile and update it
 function TIL:set_tile(tiln)
-	self.tiles[tiln]["image"] = self:make_iup_img(tiln - 1, 1)
+	self.tiles[tiln]["image"] = self:make_iup_img(tiln - 1, nil)
 	iup.Update(self.tiles[tiln])
 end
 
@@ -68,6 +71,7 @@ function TIL:create(chr_handler)
   	table.insert(TIL.ids, til)
   	self.id = tablelength(TIL.ids)
   	self.chr_handler = chr_handler
+  	self.mini_pal = 1
   	self.palette = self:update_pal()
   	self.tiles, self.hboxes, self.vbox = self:initilize_tiles()
   	self.tcnt = nil

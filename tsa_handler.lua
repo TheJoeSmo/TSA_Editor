@@ -137,7 +137,7 @@ function TSA:btn_act(idx)
 	self.tcnt:set_tsa_idx(idx)
 	current_tile = idx
 	self.tactt_gui.title = "tile: ".. dec_to_hex_byte(current_tile - 1)
-	print(cur_tsa)
 	self.attr:set_idx(math.max(cur_tsa - 1, 0) * 4 + math.floor(current_tile / 0x40))
+	self.attr:set_current_tile(current_tile)
 	self.attr:update_gui()
 end
