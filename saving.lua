@@ -63,17 +63,15 @@ end
 -- Saves the tileset directly to the rom
 function save_tileset_to_rom()
 	local tileset = the_tsa.tileset
-	for i, tiles in pairs(tileset) do
-		local loc = tile_layout_locations[i]
+	for i, tileset in pairs(tilesetz) do
+		local loc = get_ts_info("absolute_address", i)
 
 		for j=1, 4 do
 			for k=1, 256 do
-				rom.writebyte(loc, tiles[k][j])
+				rom.writebyte(loc, the_tsa:get_tile(k, j, i))
 				loc = loc + 1
 			end
 		end
-
-		local loc = tile_layout_locations[i] + 0x400
 	end
 end
 

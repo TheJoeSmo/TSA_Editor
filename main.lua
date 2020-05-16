@@ -78,7 +78,6 @@ end
 
 function change_palette_til_buttons(idx)
 	the_til.mini_pal = math.min(((the_til.mini_pal - 1) + idx) % 4) + 1
-	print(the_til.mini_pal)
 	the_til:reload()
 end
 
@@ -180,11 +179,16 @@ the_tsa:set_tcnt(the_tcnt)
 ts_dlg = set_up_ts_dlg()
 pal_dlg = set_up_pal_dlg()
 current_tile = 0
-current_tile_lable = iup.label{title="tile: ".. dec_to_hex_byte(current_tile).. "  "}
+current_tile_lable = iup.label{title="tile: ".. dec_to_hex_byte(current_tile).. "  ", margin="2x2", alignment="acenter"}
 the_tsa:set_current_tile_gui(current_tile_lable)
 tile_attr = TATTR:create(get_water_tiles(), get_semisolid_tiles(), get_solid_tiles())
 the_tsa:set_tile_attr(tile_attr)
-
+tile_attribute_labels = {
+	iup.label{title="a        a"},
+	iup.label{title="a        a"},
+	iup.label{title="a        a"},
+	iup.label{title="a        a"}
+}
 
 dialogs = dialogs + 1
 handles[dialogs] = 
@@ -195,67 +199,68 @@ handles[dialogs] =
 					iup.vbox{
 						iup.frame{
 							the_tsa.vbox, sunken="yes", margin="2x2", title="Tile Square Assembly"
-						},
-						iup.frame{
-							iup.hbox{
-								iup.vbox{
-									iup.label{title="Air"},
-									iup.hbox{
-										tile_attr.air_gui,
-										iup.button{title=">", action="tile_attr:update_values(1, 0, 0, 0)"}
-									}, margin="2x2"
-								},
-								iup.vbox{
-									iup.label{title="Water"},
-									iup.hbox{
-										iup.button{title="<", action="tile_attr:update_values(0, -1, 0, 0)"},
-										tile_attr.water_gui,
-										iup.button{title=">", action="tile_attr:update_values(0, 0, 1, 0)"}
-									}, margin="2x2"
-								},
-								iup.vbox{
-									iup.label{title="Semisolid"},
-									iup.hbox{
-										iup.button{title="<", action="tile_attr:update_values(0, 0, -1, 0)"},
-										tile_attr.semisolid_gui,
-										iup.button{title=">", action="tile_attr:update_values(0, 0, 0, 1)"}
-									}, margin="2x2"							
-								},
-								iup.vbox{
-									iup.label{title="Solid"},
-									iup.hbox{
-										iup.button{title="<", action="tile_attr:update_values(0, 0, 0, -1)"},
-										tile_attr.solid_gui
-									}, margin="2x2"
-								}
-							}
 						}, sunken="yes", margin="5x2", title="Tile Attributes"
 					},
 					iup.vbox{
 						iup.frame{
-							the_tcnt.gui, sunken="yes", margin="2x2", title="Tile"
+							iup.vbox{
+								the_tcnt.gui, sunken="yes", alignment="acenter"
+							}, alignment="acenter"
 						},
 						iup.frame{
 							iup.vbox{
 								current_tile_lable,
-								tile_attr.tile_type
-							}, sunken="yes", margin="2x2"
-							
-						}
-						
+								tile_attr.tile_type, sunken="yes", margin="2x2", alignment="acenter"
+							}
+						},
+						iup.frame{
+							iup.hbox{
+								iup.button{title="<", action="change_palette_til_buttons(-1)"},
+								iup.button{title=">", action="change_palette_til_buttons(1)"},
+								alignment="acenter", margin="8x0", sunken="yes"
+							}, title="Palette", alignment="acenter", margin="2x2"
+						}, alignment="acenter", margin="2x2", expandchildren="yes", sunken="yes"	
 					},
 					iup.frame{
+							iup.vbox{
+								the_til.vbox
+							}, sunken="yes", margin="2x2", title="Background Tiles"
+					}
+				},
+				iup.frame{
+					iup.hbox{
 						iup.vbox{
-							the_til.vbox,
-							iup.frame{
-								iup.hbox{
-									iup.button{title="<", action="change_palette_til_buttons(-1)"},
-									iup.button{title=">", action="change_palette_til_buttons(1)"}
-								}, title="Palette"
-							}
-						}						
-					}, sunken="yes", margin="4x2", title="Background Tiles"
-				}
+							tile_attribute_labels[1],
+							iup.hbox{
+								tile_attr.air_gui,
+								iup.button{title=">", action="tile_attr:update_values(1, 0, 0, 0)"}
+							}, margin="2x2"
+						},
+						iup.vbox{
+							tile_attribute_labels[2],
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, -1, 0, 0)"},
+									tile_attr.water_gui,
+								iup.button{title=">", action="tile_attr:update_values(0, 0, 1, 0)"}
+							}, margin="2x2"
+						},
+						iup.vbox{
+							tile_attribute_labels[3],
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, 0, -1, 0)"},
+										tile_attr.semisolid_gui,
+								iup.button{title=">", action="tile_attr:update_values(0, 0, 0, 1)"}
+							}, margin="2x2"							
+						},
+						iup.vbox{
+							tile_attribute_labels[4],
+							iup.hbox{
+								iup.button{title="<", action="tile_attr:update_values(0, 0, 0, -1)"},
+								tile_attr.solid_gui
+							}, margin="2x2"
+						}
+					}, margin="2x2", sunken="yes", title="Tile Attributes"
+				}, alignment="acenter", margin="2x2"
 			}
 		},
 		menu=iup.menu{
@@ -288,11 +293,12 @@ handles[dialogs] =
 			}
 		},
 		title="TSA Editor",
-		size="450x220",
+		size="450x240",
 		margin="10x10"
 	}
+the_tsa:update_tile_attribute_names()
+tile_attr:update_gui()
 handles[dialogs]:showxy(iup.CENTER, iup.CENTER)
-
 
 state = 0
 

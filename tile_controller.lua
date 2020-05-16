@@ -13,7 +13,8 @@ function TCNT:initialize_gui()
 			image=tile,
 			impress=tile,
 			impressboarder="no",
-			rastersize="16x16"
+			rastersize="16x16",
+			imageposition="top"
 		}
 		buttons[i].action = "TCNT.ids[".. self.id .."]:btn_act(".. i ..")"
 	end

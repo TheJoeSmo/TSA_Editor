@@ -49,8 +49,11 @@ function TSA:load_tsa_img(tiln)
 end
 
 -- Returns the current tile that should be displayed in the tsa
-function TSA:get_tile(tiln, n)
-	return self.tileset[cur_tsa][tiln][n]
+function TSA:get_tile(tiln, n, tile)
+	if not tile then
+		tile = cur_tsa
+	end
+	return self.tileset[tile][tiln][n]
 end
 
 -- Loads the tsa for the first time
@@ -108,11 +111,34 @@ end
 
 -- Reloads the entire TSA
 function TSA:reload()
-	self.attr:set_idx(cur_tsa * 4 + math.floor(current_tile / 0x40))
+	self.attr:set_idx(math.max(cur_tsa - 1, 0) * 4 + math.floor(current_tile / 0x40))
 	self.attr:update_gui()
 	self.palette = self:update_pal()
 	for i=1, 256 do
 		self:reload_tile(i)
+	end
+	self:update_tile_attribute_names()
+end
+
+function TSA:update_tile_attribute_names()
+	if cur_tsa == 1 then
+		tile_attribute_labels[1].title = "Solid           "
+		iup.Update(tile_attribute_labels[1])
+		tile_attribute_labels[2].title = "Can Enter       "
+		iup.Update(tile_attribute_labels[2])
+		tile_attribute_labels[3].title = "nil             "
+		iup.Update(tile_attribute_labels[3])
+		tile_attribute_labels[4].title = "nil             "
+		iup.Update(tile_attribute_labels[4])
+	else
+		tile_attribute_labels[1].title = "Air             "
+		iup.Update(tile_attribute_labels[1])
+		tile_attribute_labels[2].title = "Water           "
+		iup.Update(tile_attribute_labels[2])
+		tile_attribute_labels[3].title = "Semisolid       "
+		iup.Update(tile_attribute_labels[3])
+		tile_attribute_labels[4].title = "Solid           "
+		iup.Update(tile_attribute_labels[4])
 	end
 end
 

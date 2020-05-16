@@ -36,9 +36,12 @@ function TIL:initilize_tiles()
 		end
 		local hbox = iup.hbox(tilez)
 		hbox["margin"] = "0x0"
+		hbox["alignment"] = "acenter"
 		table.insert(hboxes, hbox)
 	end
 	vbox = iup.vbox(hboxes)
+	vbox["alignment"] = "acenter"
+	vbox["margin"] = "2x2"
 	return tiles, hboxes, vbox
 end
 

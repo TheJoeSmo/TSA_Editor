@@ -1,0 +1,264 @@
+enterable    :50, E8, BC, E0, C9, 5F, DF, 66, BD, E6, CC
+fortress     :67, EB
+toad house   :50, E0
+spade panel  :E8
+hand trap    :E6
+clear tile   :EB, 00, 01, 40, 41, 80, 81, C0, C1
+boarder      :4F, 4E, E7
+dock         :4B
+water        :82, 83, 84, 85, 86, 87, 88, 89, 8A, 8B, 8C, 8D, 8E, 8F, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 9A, 9B, 9C, 9D, 9E, 9F, A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, AA
+removable    :51, 52, 54, 67, EB, E4, 56, 9D
+alt tile     :45, 46, 60, E3, DA, B3
+horz path	 :45, B2, B3, AC, B7, B8, DA, B9, E6
+vert path    :46, B1, AA, AB, B0, DB, BA
+| Plains
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+| Fortress
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+lava         :94, 95
+spike        :E2, E3
+conveyor     :34, 35
+| Hilly
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+quicksand    :49, 4A
+45 / slope   :99, E2, 25
+flat slope   :9A, E3, 26
+45 \ slope   :9B, E4, 27
+22 / slope   :9C, 9D, E5, E6, 28, 29
+22 \ slope   :9E, 9F, E7, E8, 2A, 2B
+45 \ roof    :E9
+45 / roof    :EA
+22 \ roof    :EB, EC
+22 / roof    :ED, EE
+| Clouds and Coin-Heaven
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+conveyor     :34, 35
+donut        :5B
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+jelectro     :F4
+cable        :C9, CA, CB, CC, CD, CE, CF, D0
+| Munchy-Munchers
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB, 98, 99, 9A, BF
+sky          :80
+jelectro     :33
+conveyor     :34, 35
+| Water
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66, C0, C2
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+sky          :8A
+jelectro     :F4
+spike        :0C, 0D
+donut        :5B
+| Toad House
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+sky          :09, 42, 48, 49, 4A, 4B
+chest        :81, 82, 83, 84, 86, 87, 88, 89
+| Pipes
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB, 4C, 4D, 4E, 4F, 50, 51, 52, 53, 91, 92, 93, 94, 95, 96, 97, 98, 99, 9A, 9B, 9C, 9D, 9E, 9F, A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, AA, AB, AC, AD, AE, AF, BD, BE, BF
+spikes       :0C, 0D
+jelectro     :F4
+sky          :80
+| Desert
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+sky          :80
+spike        :7D, 7E
+| Airship
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+| Giant World
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F, 4B, 4C, 4E, 4F, 5B, 5C, 5D, 5E
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70, 47, 48, 49, 4A
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+sky          :80
+conveyor     :34, 35
+jelectro     :33
+| Ice
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+ice          :36, 37, 38, 39, 3A
+frozen       :55, 56
+sky          :80
+conveyor     :34, 35
+donut        :5B
+| Sky
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+conveyor     :34, 35
+| Underground
+note block   :2E, 2F, 30, 31, 71, 03
+ice block    :32
+muncher      :66
+vine         :85
+waterfall    :E0, E1
+pswitch      :F2, D7
+coin         :40, 41, 05
+bump block   :72, 73, 74, 75, F3
+? block      :60, 61, 62, 63, 64, 65, 5F
+brick        :67, 68, 69, 6A, 6B, 6C, 6D, 6E, 6F, 70
+door         :42, 43
+hidden       :44, 45, 46
+pipe         :AD, AE, AF, B0, B1, B2, B3, B4, B5, B6, B7, B8, B9, BA, BB
+sky          :02
+45 / slope   :25
+flat slope   :26
+45 \ slope   :27
+22 / slope   :28, 29, EB, EC
+22 \ slope   :2A, 2B, ED, EE
+45 \ roof    :A0
+45 / roof    :A1
+22 \ roof    :A2, A3
+22 / roof    :A4, A5
+ceiling      :E9, EA
+|
+|
+|
+|
