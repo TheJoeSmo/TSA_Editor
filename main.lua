@@ -90,6 +90,7 @@ function get_all_ts_info(info)
 end
 
 function get_ts_info(info, tileset)
+	--print(info, tileset)
 	return tilesetz[tileset][info]
 end
 

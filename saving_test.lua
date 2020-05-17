@@ -1,0 +1,1 @@
+rom.writebyte(0x10, 0x69)

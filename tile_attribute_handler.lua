@@ -87,6 +87,9 @@ function TATTR:set_gui_element_title(ele, title)
 end
 
 function TATTR:check_custom_tiles(tiln)
+	if tiln == nil then
+		return nil
+	end
 	local custom_tiles = self.attributes[cur_tsa]
 	for key, value in pairs(custom_tiles) do
 		for i, v in pairs(value) do
