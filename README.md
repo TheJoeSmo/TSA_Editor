@@ -1,13 +1,16 @@
 # TSA_Editor
 A lua based tile square assembly editor that runs simultaneously with FCEUX in real time.
 
-The tile square assembly editor will provide:
+## Features
 <ul>
-  <li>An easy view for romhackers to easily find and edit blocks in real time.
-  <li>Dynamic control over what is read and edited.
-  <li>Override mechanics for custom roms to be supported by the tsa editor
+  <li>Tile square assembly editability with editable .dat files
+  <li>Tile square assembly attribute editability
+  <li>Custom tile support with editable .dat files
+  <li>Soft and hard saving options
+  <li>Custom palette support with editable .dat files
 </ul>
 
 -------------
 
-Run main.lua in FCEUX to start the program.
+## Instalation
+Open up FCEUX 2.2.3 or greater and go to file -> lua -> browse and run TSA_Editor/main.lua.
